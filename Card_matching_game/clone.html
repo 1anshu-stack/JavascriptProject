@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 250px);
+            gap: 20px;
+            max-width: 60%;
+        }
+
+        .card {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 120px;
+            background-color: #f0f0f0;
+            font-size: 24px;
+            cursor: pointer;
+            transition: backgroun-color 0.3s;
+        }
+
+        .card.flipped {
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="board"></div>
+    <script>
+        const numbers = [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8];
+        let canFlip = true;
+        let flippedCard = []
+        let matchedCard = []
+
+       function createCard(value){
+        const card = document.createElement('div')
+        card.classList.add('card')
+        card.innerText = '?'
+        card.dataset.number = value;
+        card.addEventListener('click', handleClick);
+        return card;
+       } 
+
+       function handleClick(){
+        if(!canFlip || flippedCard.length >=2 || this.classList.contains('flipped') || matchedCard.includes(this)){
+            return;
+        }
+
+        this.classList.add('flipped')
+        this.innerText=this.dataset.number
+        flippedCard.push(this)
+        if(flippedCard.length === 2){
+            checkMatch();
+        }
+       }
+
+       function checkMatch(){
+         canFlip = false
+         setTimeout(()=>{
+            const [a, b] = flippedCard;
+            if(a.dataset.number === b.dataset.number){
+                matchedCard.push(a, b);
+                if(matchedCard.length === numbers.length){
+                    alert(`You have won the match`)
+                }
+            }
+            else{
+                    a.classList.remove('flipped')
+                    b.classList.remove('flipped')
+                    a.textContent = '?'
+                    b.textContent = '?'
+                }
+                flippedCard = [];
+                canFlip = true
+         }, 1000)
+       }
+
+       function initGame(){
+        const board = document.querySelector('.board')
+        numbers.sort(() => Math.random() - 0.5);
+        numbers.forEach((value) => {
+            const card = createCard(value)
+            board.appendChild(card)
+        })
+       }
+       initGame();
+
+    </script>
+</body>
+</html>

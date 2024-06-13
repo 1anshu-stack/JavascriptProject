@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIC TAC TOE</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+    
+        .main {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 10px;
+        }
+    
+        .cell {
+            height: 100px;
+            width: 100px;
+            border: 1px solid black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main"></div>
+
+    <script>
+        const main = document.querySelector('.main');
+        let winner = null;
+        let currrentuser = 'X'
+        const cells = Array.from({length: 9}).fill(null)
+
+        function render(){
+            main.innerHTML = ''
+            cells.forEach((value, index) => {
+                const cell = document.createElement('div')
+                cell.classList.add('cell')
+                cell.innerText = value || ''
+                cell.addEventListener('click', () => handleClick(index));
+                main.appendChild(cell);
+            })
+        }
+
+        function handleClick(index){
+            if(winner || cells[index]) return;
+            cells[index] = currrentuser;
+            render();
+
+            winner = winnerCheck()
+
+            if(winner){
+                setTimeout(() => {
+                    alert(`Player ${winner} is a winner`)
+                    resetGamer();
+                }, 100)
+            }
+            else if(!cells.includes(null)){
+                setTimeout(() => {
+                    alert(`It's a Tie`)
+                    resetGamer();
+                }, 100)
+            }
+            else{
+                currrentuser = currrentuser === 'X' ? 'O' : 'X';
+            }
+        }
+
+        function winnerCheck() {
+            const conditions = [
+                [0,1,2], [3,4,5], [6,7,8],
+                [0,3,6], [1,4,7], [2,5,8],
+                [0,4,8], [6,4,2]
+            ]
+
+            for(let singleVal of conditions){
+                const [a, b, c] = singleVal;
+                if(cells[a] && cells[a]===cells[b] && cells[a]===cells[c]){
+                    return cells[a];
+                }
+            }
+        }
+
+        function resetGamer(){
+            cells.fill(null);
+            currrentuser = 'X';
+            winner = null;
+            render();
+        }
+
+        render();
+    </script>
+</body>
+
+</html>
